@@ -21,5 +21,6 @@ addsub:
 
 	// final
 	uxth	r3, r3			// Mask
-	orrs	r0, r2, r3		// r0 = upperval | lowerval
+	movs	r0, r2			// r0 = r2
+	orrs	r0, r3			// r0 = upperval | lowerval
 	bx		lr
