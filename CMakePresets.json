@@ -1,0 +1,160 @@
+{
+	"version": 3,
+	"cmakeMinimumRequired": {
+		"major": 3,
+		"minor": 21,
+		"patch": 0
+	},
+	"configurePresets": [
+		{
+			"name": "default",
+			"displayName": "Default",
+			"generator": "Ninja",
+			"binaryDir": "${sourceDir}/build/.${presetName}",
+			"cacheVariables": {
+				"EMBED_TEST_BUILD_LIB_ONLY": {
+					"type": "BOOL",
+					"value": false
+				},
+				"EMBED_TEST_BUILD_SHARED_LIBS": {
+					"type": "BOOL",
+					"value": false
+				},
+				"EMBED_TEST_ENABLE_EXPORTS": {
+					"type": "BOOL",
+					"value": false
+				},
+				"EMBED_TEST_ENABLE_OBJDUMP": {
+					"type": "BOOL",
+					"value": false
+				}
+			}
+		},
+		{
+			"name": "debug",
+			"hidden": true,
+			"cacheVariables": {
+				"CMAKE_BUILD_TYPE": "Debug",
+				"EMBED_TEST_ENABLE_EXPORTS": true
+			}
+		},
+		{
+			"name": "reldebinfo",
+			"hidden": true,
+			"cacheVariables": {
+				"CMAKE_BUILD_TYPE": "RelWithDebInfo",
+				"EMBED_TEST_ENABLE_OBJDUMP": true
+			}
+		},
+		{
+			"name": "release",
+			"hidden": true,
+			"cacheVariables": {
+				"CMAKE_BUILD_TYPE": "Release",
+				"EMBED_TEST_ENABLE_OBJDUMP": true
+			}
+		},
+		{
+			"name": "linux-common",
+			"hidden": true,
+			"inherits": [
+				"default"
+			],
+			"cacheVariables": {
+				"CMAKE_INSTALL_PREFIX": "/usr"
+			},
+			"condition": {
+				"type": "equals",
+				"lhs": "${hostSystemName}",
+				"rhs": "Linux"
+			},
+			"vendor": {
+				"microsoft.com/VisualStudioSettings/CMake/1.0": {
+					"hostOS": [
+						"Linux"
+					]
+				},
+				"microsoft.com/VisualStudioRemoteSettings/CMake/1.0": {
+					"sourceDir": "$env{HOME}/.vs/$ms{projectDirName}"
+				}
+			}
+		},
+		{
+			"name": "linux-x86-gcc",
+			"hidden": true,
+			"inherits": [
+				"linux-common"
+			],
+			"cacheVariables": {
+				"CMAKE_INSTALL_LIBDIR": "lib/i686-linux-gnu",
+				"CMAKE_TOOLCHAIN_FILE": "cmake/toolchains/linux-x86-gcc.cmake"
+			}
+		},
+		{
+			"name": "linux-x86-gcc-debug",
+			"displayName": "Linux x86 (gcc) [Debug]",
+			"inherits": [
+				"debug",
+				"linux-x86-gcc"
+			]
+		},
+		{
+			"name": "linux-x86-gcc-release",
+			"displayName": "Linux x86 (gcc) [Release]",
+			"inherits": [
+				"release",
+				"linux-x86-gcc"
+			]
+		},
+		{
+			"name": "pico-rp2040-gcc",
+			"hidden": true,
+			"inherits": [
+				"default"
+			],
+			"cacheVariables": {
+				"CMAKE_TOOLCHAIN_FILE": "cmake/toolchains/pico-rp2040-gcc.cmake",
+				"EMBED_TEST_BUILD_LIB_ONLY": true,
+				"EMBED_TEST_TARGET": "pico"
+			}
+		},
+		{
+			"name": "pico-rp2040-gcc-debug",
+			"displayName": "RP2040 (Cortex-M0+) [Debug]",
+			"inherits": [
+				"debug",
+				"pico-rp2040-gcc"
+			]
+		},
+		{
+			"name": "pico-rp2040-gcc-reldebinfo",
+			"displayName": "RP2040 (Cortex-M0+) [Release (include debug info)]",
+			"inherits": [
+				"reldebinfo",
+				"pico-rp2040-gcc"
+			]
+		},
+		{
+			"name": "pico-rp2040-gcc-release",
+			"displayName": "RP2040 (Cortex-M0+) [Release]",
+			"inherits": [
+				"release",
+				"pico-rp2040-gcc"
+			]
+		}
+	],
+	"buildPresets": [
+		{
+			"name": "linux-x86-gcc-release",
+			"configurePreset": "linux-x86-gcc-release",
+			"displayName": "Release",
+			"cleanFirst": true
+		},
+		{
+			"name": "pico-rp2040-gcc-release",
+			"configurePreset": "pico-rp2040-gcc-release",
+			"displayName": "Release",
+			"cleanFirst": true
+		}
+	]
+}
