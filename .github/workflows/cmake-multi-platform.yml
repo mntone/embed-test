@@ -28,17 +28,31 @@ jobs:
       # To add more build types (Release, Debug, RelWithDebInfo, etc.) customize the build_type list.
       matrix:
         os: [ubuntu-24.04]
-        preset: [pico-rp2040-gcc-reldebinfo, pico-rp2040-gcc-release]
+        preset:
+        - pico-rp2040-gcc-reldebinfo
+        - pico-rp2040-gcc-release
+        - pico-rp2350-gcc-reldebinfo
+        - pico-rp2350-gcc-release
         include:
           - os: ubuntu-24.04
             preset: pico-rp2040-gcc-reldebinfo
-            config: reldebinfo
+            config: debug
             device: rp2040
             suffix: d
           - os: ubuntu-24.04
             preset: pico-rp2040-gcc-release
             config: release
             device: rp2040
+            suffix:
+          - os: ubuntu-24.04
+            preset: pico-rp2350-gcc-reldebinfo
+            config: debug
+            device: rp2350
+            suffix: d
+          - os: ubuntu-24.04
+            preset: pico-rp2350-gcc-release
+            config: release
+            device: rp2350
             suffix:
 
     steps:

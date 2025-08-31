@@ -141,6 +141,42 @@
 				"release",
 				"pico-rp2040-gcc"
 			]
+		},
+		{
+			"name": "pico-rp2350-gcc",
+			"hidden": true,
+			"inherits": [
+				"default"
+			],
+			"cacheVariables": {
+				"CMAKE_TOOLCHAIN_FILE": "cmake/toolchains/pico-rp2350-gcc.cmake",
+				"INKNIT_BUILD_LIB_ONLY": true,
+				"INKNIT_TARGET": "pico"
+			}
+		},
+		{
+			"name": "pico-rp2350-gcc-debug",
+			"displayName": "RP2350 (Cortex-M33) [Debug]",
+			"inherits": [
+				"debug",
+				"pico-rp2350-gcc"
+			]
+		},
+		{
+			"name": "pico-rp2350-gcc-reldebinfo",
+			"displayName": "RP2350 (Cortex-M33) [Release (include debug info)]",
+			"inherits": [
+				"reldebinfo",
+				"pico-rp2350-gcc"
+			]
+		},
+		{
+			"name": "pico-rp2350-gcc-release",
+			"displayName": "RP2350 (Cortex-M33) [Release]",
+			"inherits": [
+				"release",
+				"pico-rp2350-gcc"
+			]
 		}
 	],
 	"buildPresets": [
@@ -159,6 +195,18 @@
 		{
 			"name": "pico-rp2040-gcc-release",
 			"configurePreset": "pico-rp2040-gcc-release",
+			"displayName": "Release",
+			"cleanFirst": true
+		},
+		{
+			"name": "pico-rp2350-gcc-reldebinfo",
+			"configurePreset": "pico-rp2350-gcc-reldebinfo",
+			"displayName": "RelWithDebInfo",
+			"cleanFirst": true
+		},
+		{
+			"name": "pico-rp2350-gcc-release",
+			"configurePreset": "pico-rp2350-gcc-release",
 			"displayName": "Release",
 			"cleanFirst": true
 		}
