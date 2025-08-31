@@ -32,8 +32,14 @@ jobs:
         include:
           - os: ubuntu-24.04
             preset: pico-rp2040-gcc-reldebinfo
+            config: reldebinfo
+            device: rp2040
+            suffix: d
           - os: ubuntu-24.04
             preset: pico-rp2040-gcc-release
+            config: release
+            device: rp2040
+            suffix:
 
     steps:
     - uses: actions/checkout@v4
@@ -92,4 +98,5 @@ jobs:
       with:
         tag: ${{ github.ref_name }}
         artifacts: 'build/.${{ matrix.preset }}/src/*/*.a'
+        asset_name: 'libembed_test-${{ github.ref_name }}-${{ matrix.device }}${{ matrix.suffix }}.a'
         token: ${{ secrets.GITHUB_TOKEN }}
