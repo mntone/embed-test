@@ -33,35 +33,31 @@ jobs:
         - pico-rp2040-gcc-release
         - pico-rp2350-gcc-reldebinfo
         - pico-rp2350-gcc-release
+        toolchain: [12.2.Rel1, 13.2.Rel1, latest]
         include:
-          - os: ubuntu-24.04
-            preset: pico-rp2040-gcc-reldebinfo
+          - preset: pico-rp2040-gcc-reldebinfo
             config: debug
             device: rp2040
-            suffix: d
-          - os: ubuntu-24.04
-            preset: pico-rp2040-gcc-release
+          - preset: pico-rp2040-gcc-release
             config: release
             device: rp2040
-            suffix:
-          - os: ubuntu-24.04
-            preset: pico-rp2350-gcc-reldebinfo
+          - preset: pico-rp2350-gcc-reldebinfo
             config: debug
             device: rp2350
-            suffix: d
-          - os: ubuntu-24.04
-            preset: pico-rp2350-gcc-release
+          - preset: pico-rp2350-gcc-release
             config: release
             device: rp2350
-            suffix:
 
     steps:
+    - run: echo "${{ toJson(matrix) }}"
+
     - uses: actions/checkout@v4
 
-    - name: Install ARM GCC
-      run: |
-        sudo apt update
-        sudo apt install -y gcc-arm-none-eabi
+    - name: Install Arm GNU Toolchain (arm-none-eabi-gcc)
+      uses: carlosperate/arm-none-eabi-gcc-action@v1
+      with:
+        release: ${{ matrix.toolchain }}
+        path-env-var: GNU_ARM_TOOLCHAIN
 
     - name: Set reusable strings
       # Turn repeated input strings (such as the build output directory) into step outputs. These step outputs can be used throughout the workflow file.
@@ -111,7 +107,7 @@ jobs:
       if: startsWith(github.ref, 'refs/tags/')
       run: |
         mkdir -p upload
-        cp build/.${{ matrix.preset }}/src/sample/libembed_test*.a upload/libembed_test-${{ github.ref_name }}-${{ matrix.device }}${{ matrix.suffix }}.a
+        cp build/.${{ matrix.preset }}/src/sample/libembed_test*.a upload/libembed_test-${{ github.ref_name }}-${{ matrix.device }}-${{ matrix.config }}-${{ matrix.toolchain }}.a
 
     - name: Create Release
       uses: ncipollo/release-action@v1
@@ -119,5 +115,5 @@ jobs:
       with:
         allowUpdates: true
         tag: ${{ github.ref_name }}
-        artifacts: upload/libembed_test-${{ github.ref_name }}-${{ matrix.device }}${{ matrix.suffix }}.a
+        artifacts: upload/libembed_test-${{ github.ref_name }}-${{ matrix.device }}-${{ matrix.config }}-${{ matrix.toolchain }}.a
         token: ${{ secrets.GITHUB_TOKEN }}
