@@ -151,6 +151,12 @@
 			"cleanFirst": true
 		},
 		{
+			"name": "pico-rp2040-gcc-reldebinfo",
+			"configurePreset": "pico-rp2040-gcc-reldebinfo",
+			"displayName": "RelWithDebInfo",
+			"cleanFirst": true
+		},
+		{
 			"name": "pico-rp2040-gcc-release",
 			"configurePreset": "pico-rp2040-gcc-release",
 			"displayName": "Release",
