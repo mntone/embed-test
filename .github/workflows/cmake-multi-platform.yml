@@ -92,11 +92,15 @@ jobs:
         # Optional. Default is '6'
         compression-level: 5
 
+    - name: Copy and rename binary
+      run: |
+        mkdir -p upload
+        cp build/.${{ matrix.preset }}/src/*/*.a upload/libembed_test-${{ github.ref_name }}-${{ matrix.device }}${{ matrix.suffix }}.a
+
     - name: Create Release
       uses: ncipollo/release-action@v1
       if: startsWith(github.ref, 'refs/tags/')
       with:
         tag: ${{ github.ref_name }}
-        artifacts: build/.${{ matrix.preset }}/src/*/*.a
-        name: libembed_test-${{ github.ref_name }}-${{ matrix.device }}${{ matrix.suffix }}.a
+        artifacts: upload/libembed_test-${{ github.ref_name }}-${{ matrix.device }}${{ matrix.suffix }}.a
         token: ${{ secrets.GITHUB_TOKEN }}
