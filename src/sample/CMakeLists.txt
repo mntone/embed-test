@@ -19,11 +19,11 @@ target_sources(${PROJECT_NAME} PRIVATE
 	test.c
 	)
 
-if(INKNIT_PROCESSOR STREQUAL "armv6m")
+if(EMBED_TEST_PROCESSOR STREQUAL "armv6m")
 	target_sources(${PROJECT_NAME} PRIVATE
 		addsub_armv6m.s
 		)
-elseif(INKNIT_PROCESSOR STREQUAL "armv8m")
+elseif(EMBED_TEST_PROCESSOR STREQUAL "armv8m")
 	target_sources(${PROJECT_NAME} PRIVATE
 		addsub_armv8m.s
 		)
