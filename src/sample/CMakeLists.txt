@@ -19,6 +19,20 @@ target_sources(${PROJECT_NAME} PRIVATE
 	test.c
 	)
 
+if(INKNIT_PROCESSOR STREQUAL "armv6m")
+	target_sources(${PROJECT_NAME} PRIVATE
+		addsub_armv6m.s
+		)
+elseif(INKNIT_PROCESSOR STREQUAL "armv8m")
+	target_sources(${PROJECT_NAME} PRIVATE
+		addsub_armv8m.s
+		)
+else()
+	target_sources(${PROJECT_NAME} PRIVATE
+		addsub.c
+		)
+endif()
+
 if(EMBED_TEST_ENABLE_OBJDUMP)
 	enable_disassemble(${PROJECT_NAME})
 endif()
