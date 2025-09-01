@@ -13,20 +13,32 @@ jobs:
   setup:
     runs-on: ubuntu-24.04
 
+    outputs:
+      toolchain-path: ${{ steps.toolchain.outputs.path }}
+
     steps:
-    - name: Install Arm GNU Toolchain (arm-none-eabi-gcc)
+    - id: toolchain
+      name: Install Arm GNU Toolchain (arm-none-eabi-gcc)
       uses: carlosperate/arm-none-eabi-gcc-action@v1
       with:
         release: latest
         path-env-var: GNU_ARM_TOOLCHAIN
 
+    - run: echo "GNU_ARM_TOOLCHAIN=${{ steps.toolchain.outputs.path }}" >> $GITHUB_ENV
+
+    - uses: actions/checkout@v4
+
   build:
+    permissions:
+      contents: write
+
     needs: setup
 
     runs-on: ubuntu-24.04
 
-    permissions:
-      contents: write
+    env:
+      GNU_ARM_TOOLCHAIN: ${{ needs.setup.outputs.toolchain-path }}
+      PATH: ${{ needs.setup.outputs.toolchain-path }}:${{ env.PATH }}
 
     strategy:
       # Set fail-fast to false to ensure that feedback is delivered for all matrix combinations. Consider changing this to true when your workflow is stable.
@@ -58,11 +70,12 @@ jobs:
             device: rp2350
 
     steps:
-    - uses: actions/checkout@v4
+    - name: Check Arm GNU Toolchain version
+      run: arm-none-eabi-gcc --version
 
-    - name: Set reusable strings
+    - id: strings
+      name: Set reusable strings
       # Turn repeated input strings (such as the build output directory) into step outputs. These step outputs can be used throughout the workflow file.
-      id: strings
       shell: bash
       run: |
         echo "build-output-dir=${{ github.workspace }}/build/.${{ matrix.preset }}" >> "$GITHUB_OUTPUT"
