@@ -10,7 +10,19 @@ on:
     branches: [ "main" ]
 
 jobs:
+  setup:
+    runs-on: ubuntu-24.04
+
+    steps:
+    - name: Install Arm GNU Toolchain (arm-none-eabi-gcc)
+      uses: carlosperate/arm-none-eabi-gcc-action@v1
+      with:
+        release: latest
+        path-env-var: GNU_ARM_TOOLCHAIN
+
   build:
+    needs: setup
+
     runs-on: ubuntu-24.04
 
     permissions:
@@ -20,18 +32,17 @@ jobs:
       # Set fail-fast to false to ensure that feedback is delivered for all matrix combinations. Consider changing this to true when your workflow is stable.
       fail-fast: false
 
-      # Set up a matrix to run the following 4x3 configurations:
-      # 1. <Pico RP2040, RelWithDebInfo, (12.2.Rel1, 13.2.Rel1, latest)>
-      # 2. <Pico RP2040, Release,        (12.2.Rel1, 13.2.Rel1, latest)>
-      # 3. <Pico RP2350, RelWithDebInfo, (12.2.Rel1, 13.2.Rel1, latest)>
-      # 4. <Pico RP2350, Release,        (12.2.Rel1, 13.2.Rel1, latest)>
+      # Set up a matrix to run the following 4 configurations:
+      # 1. <Pico RP2040, RelWithDebInfo>
+      # 2. <Pico RP2040, Release>
+      # 3. <Pico RP2350, RelWithDebInfo>
+      # 4. <Pico RP2350, Release>
       matrix:
         preset:
         - pico-rp2040-gcc-reldebinfo
         - pico-rp2040-gcc-release
         - pico-rp2350-gcc-reldebinfo
         - pico-rp2350-gcc-release
-        toolchain: [12.2.Rel1, 13.2.Rel1, latest]
         include:
           - preset: pico-rp2040-gcc-reldebinfo
             config: debug
@@ -48,12 +59,6 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
-
-    - name: Install Arm GNU Toolchain (arm-none-eabi-gcc)
-      uses: carlosperate/arm-none-eabi-gcc-action@v1
-      with:
-        release: ${{ matrix.toolchain }}
-        path-env-var: GNU_ARM_TOOLCHAIN
 
     - name: Set reusable strings
       # Turn repeated input strings (such as the build output directory) into step outputs. These step outputs can be used throughout the workflow file.
@@ -103,13 +108,13 @@ jobs:
       if: startsWith(github.ref, 'refs/tags/')
       run: |
         mkdir -p upload
-        cp build/.${{ matrix.preset }}/src/sample/libembed_test*.a upload/libembed_test-${{ github.ref_name }}-${{ matrix.device }}-${{ matrix.config }}-${{ matrix.toolchain }}.a
+        cp build/.${{ matrix.preset }}/src/sample/libembed_test*.a upload/libembed_test-${{ github.ref_name }}-${{ matrix.device }}-${{ matrix.config }}.a
 
-    - name: Create Release
+    - if: startsWith(github.ref, 'refs/tags/')
+      name: Create Release
       uses: ncipollo/release-action@v1
-      if: startsWith(github.ref, 'refs/tags/')
       with:
         allowUpdates: true
         tag: ${{ github.ref_name }}
-        artifacts: upload/libembed_test-${{ github.ref_name }}-${{ matrix.device }}-${{ matrix.config }}-${{ matrix.toolchain }}.a
+        artifacts: upload/libembed_test-${{ github.ref_name }}-${{ matrix.device }}-${{ matrix.config }}.a
         token: ${{ secrets.GITHUB_TOKEN }}
