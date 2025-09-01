@@ -38,7 +38,6 @@ jobs:
 
     env:
       GNU_ARM_TOOLCHAIN: ${{ needs.setup.outputs.toolchain-path }}
-      PATH: ${{ needs.setup.outputs.toolchain-path }}:${{ env.PATH }}
 
     strategy:
       # Set fail-fast to false to ensure that feedback is delivered for all matrix combinations. Consider changing this to true when your workflow is stable.
@@ -71,7 +70,7 @@ jobs:
 
     steps:
     - name: Check Arm GNU Toolchain version
-      run: arm-none-eabi-gcc --version
+      run: ${{ needs.setup.outputs.toolchain-path }}/arm-none-eabi-gcc --version
 
     - id: strings
       name: Set reusable strings
