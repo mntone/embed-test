@@ -26,8 +26,6 @@ jobs:
 
     - run: echo "GNU_ARM_TOOLCHAIN=${{ steps.toolchain.outputs.path }}" >> $GITHUB_ENV
 
-    - uses: actions/checkout@v4
-
   build:
     permissions:
       contents: write
@@ -69,8 +67,16 @@ jobs:
             device: rp2350
 
     steps:
+    - name: Install Arm GNU Toolchain (arm-none-eabi-gcc)
+      uses: carlosperate/arm-none-eabi-gcc-action@v1
+      with:
+        release: latest
+        path-env-var: GNU_ARM_TOOLCHAIN
+
     - name: Check Arm GNU Toolchain version
       run: ${{ needs.setup.outputs.toolchain-path }}/arm-none-eabi-gcc --version
+
+    - uses: actions/checkout@v4
 
     - id: strings
       name: Set reusable strings
